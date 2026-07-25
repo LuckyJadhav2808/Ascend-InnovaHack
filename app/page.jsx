@@ -225,23 +225,28 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Candidate Testimonial Card */}
-          <div className="bg-white p-5 rounded-3xl border border-[#E5E5E0] shadow-card flex items-start gap-4 max-w-lg">
-            <div className="w-11 h-11 rounded-2xl bg-[#D9CFF0] flex items-center justify-center font-extrabold text-[#1E1E1E] text-base shrink-0 border border-white shadow-xs">
-              S
+          {/* Live Platform Highlights & Metrics Card */}
+          <div className="bg-white p-5 rounded-3xl border border-[#E5E5E0] shadow-card grid grid-cols-3 gap-3 sm:gap-4 max-w-xl">
+            <div className="flex flex-col items-start">
+              <div className="flex items-center gap-1.5">
+                <Brain className="w-4 h-4 text-[#FF6B4A]" />
+                <span className="text-base sm:text-lg font-black tracking-tight text-[#1E1E1E]">5,000+</span>
+              </div>
+              <span className="text-[11px] font-bold text-[#8A8A8A] mt-0.5">Real Questions</span>
             </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-1 text-[#F6D67A]">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-[#F6D67A]" />
-                ))}
+            <div className="flex flex-col items-start border-l border-[#E5E5E0] pl-3 sm:pl-4">
+              <div className="flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-[#FF6B4A]" />
+                <span className="text-base sm:text-lg font-black tracking-tight text-[#1E1E1E]">7 Tracks</span>
               </div>
-              <p className="text-xs text-[#1E1E1E] font-medium leading-relaxed">
-                "Ascend's live league kept me accountable every single day. Passed my Amazon SDE 2 System Design round with ease!"
-              </p>
-              <div className="text-[11px] text-[#8A8A8A]">
-                <strong className="text-[#1E1E1E]">Siddharth M.</strong> • SDE at Amazon
+              <span className="text-[11px] font-bold text-[#8A8A8A] mt-0.5">SDE, AI, DevOps</span>
+            </div>
+            <div className="flex flex-col items-start border-l border-[#E5E5E0] pl-3 sm:pl-4">
+              <div className="flex items-center gap-1.5">
+                <Flame className="w-4 h-4 text-[#FF6B4A]" />
+                <span className="text-base sm:text-lg font-black tracking-tight text-[#1E1E1E]">Weekly</span>
               </div>
+              <span className="text-[11px] font-bold text-[#8A8A8A] mt-0.5">Peer Leagues</span>
             </div>
           </div>
 
