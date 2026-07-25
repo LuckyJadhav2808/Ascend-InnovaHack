@@ -231,6 +231,33 @@ export function StoreProvider({ children }) {
     return null;
   };
 
+  // ─── Automatic Cloud Firestore Auto-Sync Engine ────────────────────────
+  useEffect(() => {
+    if (!isHydrated || !currentUid || currentUid === "guest_demo") return;
+
+    const syncToFirestore = async () => {
+      try {
+        const payload = {
+          ...user,
+          skillGraph,
+          updatedAt: new Date().toISOString()
+        };
+        await setDoc(doc(db, "users", currentUid), payload, { merge: true });
+        if (user.email) {
+          const altId = stableFallbackUid(user.email);
+          if (altId !== currentUid) {
+            await setDoc(doc(db, "users", altId), payload, { merge: true }).catch(() => {});
+          }
+        }
+      } catch (err) {
+        console.warn("[Firestore Auto-Sync Notice]", err);
+      }
+    };
+
+    const timer = setTimeout(syncToFirestore, 1000);
+    return () => clearTimeout(timer);
+  }, [user, skillGraph, currentUid, isHydrated]);
+
   // Firebase Auth Observer — sets currentUid and fetches Firestore user doc on login
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -246,26 +273,52 @@ export function StoreProvider({ children }) {
           try { savedCustomName = localStorage.getItem("ascend_custom_username") || ""; } catch (_) {}
         }
 
-        setUser((prev) => {
-          const finalName = existingDocData?.name || firebaseUser.displayName || savedCustomName || prev.name || email?.split("@")[0] || "Candidate";
-          const merged = {
-            ...prev,
-            ...(existingDocData || {}),
-            userId: uid,
-            email: email || prev.email,
-            name: finalName
-          };
-          if (typeof window !== "undefined") {
-            localStorage.setItem("ascend_user", JSON.stringify(merged));
-          }
-          return merged;
-        });
+        const finalName = existingDocData?.name || firebaseUser.displayName || savedCustomName || email?.split("@")[0] || "Candidate";
 
-        if (existingDocData?.skillGraph && existingDocData.skillGraph.nodes?.length > 0) {
-          setSkillGraph(existingDocData.skillGraph);
+        if (existingDocData) {
+          const fullUser = {
+            userId: uid,
+            name: finalName,
+            email: email || existingDocData.email || "",
+            track: existingDocData.track || "",
+            trackTitle: existingDocData.trackTitle || "",
+            customTracks: existingDocData.customTracks || [],
+            trackGraphs: existingDocData.trackGraphs || {},
+            xp: existingDocData.xp || 0,
+            streak: existingDocData.streak || { current: 1, longest: 1, lastActiveDate: new Date().toISOString() },
+            leagueId: existingDocData.leagueId || "league_gold",
+            questionsAnswered: existingDocData.questionsAnswered || 0,
+            resumeUploaded: existingDocData.resumeUploaded || false,
+            resumeFileName: existingDocData.resumeFileName || null,
+            extractedSkills: existingDocData.extractedSkills || [],
+            createdAt: existingDocData.createdAt || new Date().toISOString()
+          };
+
+          setUser(fullUser);
           if (typeof window !== "undefined") {
-            localStorage.setItem("ascend_skillGraph", JSON.stringify(existingDocData.skillGraph));
+            localStorage.setItem("ascend_user", JSON.stringify(fullUser));
+            localStorage.setItem("ascend_custom_username", finalName);
           }
+
+          if (existingDocData.skillGraph && existingDocData.skillGraph.nodes?.length > 0) {
+            setSkillGraph(existingDocData.skillGraph);
+            if (typeof window !== "undefined") {
+              localStorage.setItem("ascend_skillGraph", JSON.stringify(existingDocData.skillGraph));
+            }
+          }
+        } else {
+          setUser((prev) => {
+            const merged = {
+              ...prev,
+              userId: uid,
+              email: email || prev.email,
+              name: finalName
+            };
+            if (typeof window !== "undefined") {
+              localStorage.setItem("ascend_user", JSON.stringify(merged));
+            }
+            return merged;
+          });
         }
       } else {
         setCurrentUid("guest_demo");
@@ -600,7 +653,19 @@ export function StoreProvider({ children }) {
       let userData = {
         userId: uid,
         name: userCredential.user.displayName || email.split("@")[0] || "Candidate",
-        email: userCredential.user.email
+        email: userCredential.user.email || email,
+        track: "",
+        trackTitle: "",
+        customTracks: [],
+        trackGraphs: {},
+        xp: 0,
+        streak: { current: 1, longest: 1, lastActiveDate: new Date().toISOString() },
+        leagueId: "league_gold",
+        questionsAnswered: 0,
+        resumeUploaded: false,
+        resumeFileName: null,
+        extractedSkills: [],
+        createdAt: new Date().toISOString()
       };
 
       const existingDocData = await fetchFirestoreUser(uid, email);
@@ -608,16 +673,17 @@ export function StoreProvider({ children }) {
         userData = { ...userData, ...existingDocData };
         if (existingDocData.skillGraph && existingDocData.skillGraph.nodes?.length > 0) {
           setSkillGraph(existingDocData.skillGraph);
+          if (typeof window !== "undefined") {
+            localStorage.setItem("ascend_skillGraph", JSON.stringify(existingDocData.skillGraph));
+          }
         }
       }
 
-      setUser((prev) => {
-        const updated = { ...prev, ...userData };
-        if (typeof window !== "undefined" && updated.track) {
-          localStorage.setItem("ascend_user", JSON.stringify(updated));
-        }
-        return updated;
-      });
+      setUser(userData);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("ascend_user", JSON.stringify(userData));
+        if (userData.name) localStorage.setItem("ascend_custom_username", userData.name);
+      }
       return userData;
     } catch (err) {
       console.warn("Firebase sign in notice:", err.code || err.message);
