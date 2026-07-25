@@ -148,6 +148,8 @@ export function StoreProvider({ children }) {
 
   // 2. Real-time listener for League Standings in Firestore
   useEffect(() => {
+    if (!currentUid || currentUid === "guest_demo" || user.userId !== currentUid) return;
+
     const leagueId = user.leagueId || "league_gold";
     const membersCollRef = collection(db, "leagues", leagueId, "members");
 
@@ -182,16 +184,17 @@ export function StoreProvider({ children }) {
     );
 
     return () => unsubscribeLeague();
-  }, [user.leagueId, currentUid, user.name, user.xp, user.streak?.current, user.track]);
+  }, [user.leagueId, currentUid, user.name, user.xp, user.streak?.current, user.track, user.userId]);
 
   // 3. Real-time listener for User Practice History in Firestore
   useEffect(() => {
     if (!currentUid || currentUid === "guest_demo") return;
 
     const historyCollRef = collection(db, "users", currentUid, "history");
+    const historyQuery = query(historyCollRef, orderBy("timestamp", "desc"));
 
     const unsubscribeHistory = onSnapshot(
-      historyCollRef,
+      historyQuery,
       (querySnap) => {
         const records = [];
         querySnap.forEach((d) => {
@@ -234,6 +237,7 @@ export function StoreProvider({ children }) {
   // ─── Automatic Cloud Firestore Auto-Sync Engine ────────────────────────
   useEffect(() => {
     if (!isHydrated || !currentUid || currentUid === "guest_demo") return;
+    if (user.userId !== currentUid) return; // Guard: prevent syncing transient pre-login state
 
     const syncToFirestore = async () => {
       try {
