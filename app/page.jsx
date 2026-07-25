@@ -171,7 +171,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F6F3] text-[#1E1E1E] flex flex-col justify-between selection:bg-[#FF6B4A]/20">
+    <div className="min-h-screen bg-[#F7F6F3] text-[#1E1E1E] flex flex-col selection:bg-[#FF6B4A]/20">
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-[#E5E5E0] px-6 lg:px-12 py-4 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-3">
@@ -203,7 +203,7 @@ export default function LandingPage() {
       </header>
 
       {/* Main Hero & Production Auth Container */}
-      <main className="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-6 lg:px-12 pt-4 sm:pt-6 lg:pt-8 pb-12 lg:pb-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         {/* Left Column: Value Proposition & Hero Text */}
         <div className="lg:col-span-7 space-y-8 text-left">
           {/* Badge pill */}
