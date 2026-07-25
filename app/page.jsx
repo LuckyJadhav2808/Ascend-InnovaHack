@@ -262,8 +262,6 @@ export default function LandingPage() {
         {/* Right Column: Production Level Auth Card */}
         <div className="lg:col-span-5">
           <div className="bg-white rounded-3xl p-8 border border-[#E5E5E0] shadow-card-hover space-y-6 relative overflow-hidden">
-            <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#F6D67A]/30 rounded-full blur-2xl pointer-events-none" />
-
             {/* Auth Switcher Tabs */}
             <div className="flex bg-[#F7F6F3] p-1.5 rounded-2xl border border-[#E5E5E0]">
               <button
