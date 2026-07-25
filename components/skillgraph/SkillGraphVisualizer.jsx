@@ -41,17 +41,17 @@ export default function SkillGraphVisualizer({ graphData, compact = false }) {
       return "#E39EB2";
     };
 
-    // Smooth force simulation setup with decay to prevent continuous trembling
+    // Smooth force simulation setup with decay and boundary clamping to prevent trembling
     const simulation = d3
       .forceSimulation(nodes)
-      .alphaDecay(0.04)
-      .alphaMin(0.001)
-      .force("link", d3.forceLink(links).id((d) => d.id).distance(100).strength(0.8))
-      .force("charge", d3.forceManyBody().strength(-140))
+      .alphaDecay(0.05)
+      .alphaMin(0.005)
+      .force("link", d3.forceLink(links).id((d) => d.id).distance(135).strength(0.7))
+      .force("charge", d3.forceManyBody().strength(-380))
       .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("x", d3.forceX(width / 2).strength(0.08))
-      .force("y", d3.forceY(height / 2).strength(0.08))
-      .force("collision", d3.forceCollide().radius(35));
+      .force("x", d3.forceX(width / 2).strength(0.06))
+      .force("y", d3.forceY(height / 2).strength(0.06))
+      .force("collision", d3.forceCollide().radius(52).strength(1));
 
     // Render Edges
     const link = svg
@@ -136,8 +136,13 @@ export default function SkillGraphVisualizer({ graphData, compact = false }) {
       setSelectedNode(d);
     });
 
-    // Simulation Ticker
+    // Simulation Ticker with position bounds and auto-settle freeze
     simulation.on("tick", () => {
+      nodes.forEach((d) => {
+        d.x = Math.max(50, Math.min(width - 50, d.x));
+        d.y = Math.max(50, Math.min(height - 55, d.y));
+      });
+
       link
         .attr("x1", (d) => d.source.x)
         .attr("y1", (d) => d.source.y)
