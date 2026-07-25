@@ -194,7 +194,10 @@ export default function LandingPage() {
             Guest Demo Mode
           </button>
           <button
-            onClick={() => setAuthMode("signup")}
+            onClick={() => {
+              setAuthMode("signup");
+              document.getElementById("auth-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }}
             className="bg-[#1E1E1E] hover:bg-[#333333] text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm transition-all hover:scale-105"
           >
             Get Started
@@ -237,9 +240,9 @@ export default function LandingPage() {
             <div className="flex flex-col items-start border-l border-[#E5E5E0] pl-3 sm:pl-4">
               <div className="flex items-center gap-1.5">
                 <Zap className="w-4 h-4 text-[#FF6B4A]" />
-                <span className="text-base sm:text-lg font-black tracking-tight text-[#1E1E1E]">7 Tracks</span>
+                <span className="text-base sm:text-lg font-black tracking-tight text-[#1E1E1E]">200+</span>
               </div>
-              <span className="text-[11px] font-bold text-[#8A8A8A] mt-0.5">SDE, AI, DevOps</span>
+              <span className="text-[11px] font-bold text-[#8A8A8A] mt-0.5">Role Tracks</span>
             </div>
             <div className="flex flex-col items-start border-l border-[#E5E5E0] pl-3 sm:pl-4">
               <div className="flex items-center gap-1.5">
@@ -265,7 +268,7 @@ export default function LandingPage() {
         </div>
 
         {/* Right Column: Production Level Auth Card */}
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-5" id="auth-card">
           <div className="bg-white rounded-3xl p-8 border border-[#E5E5E0] shadow-card-hover space-y-6 relative overflow-hidden">
             {/* Auth Switcher Tabs */}
             <div className="flex bg-[#F7F6F3] p-1.5 rounded-2xl border border-[#E5E5E0]">
