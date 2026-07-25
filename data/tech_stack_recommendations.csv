@@ -1,0 +1,9 @@
+component,small_scale,medium_scale,large_scale,notes
+Feature Store,Simple solution for feature store (<100 req/s),Managed solution for feature store (100-10K req/s),Custom/distributed solution for feature store (10K+ req/s),Migrate to next tier when feature store becomes a bottleneck
+Model Serving,Simple solution for model serving (<100 req/s),Managed solution for model serving (100-10K req/s),Custom/distributed solution for model serving (10K+ req/s),Migrate to next tier when model serving becomes a bottleneck
+Orchestration,Simple solution for orchestration (<100 req/s),Managed solution for orchestration (100-10K req/s),Custom/distributed solution for orchestration (10K+ req/s),Migrate to next tier when orchestration becomes a bottleneck
+Experiment Tracking,Simple solution for experiment tracking (<100 req/s),Managed solution for experiment tracking (100-10K req/s),Custom/distributed solution for experiment tracking (10K+ req/s),Migrate to next tier when experiment tracking becomes a bottleneck
+Model Registry,Simple solution for model registry (<100 req/s),Managed solution for model registry (100-10K req/s),Custom/distributed solution for model registry (10K+ req/s),Migrate to next tier when model registry becomes a bottleneck
+Data Validation,Simple solution for data validation (<100 req/s),Managed solution for data validation (100-10K req/s),Custom/distributed solution for data validation (10K+ req/s),Migrate to next tier when data validation becomes a bottleneck
+Monitoring,Simple solution for monitoring (<100 req/s),Managed solution for monitoring (100-10K req/s),Custom/distributed solution for monitoring (10K+ req/s),Migrate to next tier when monitoring becomes a bottleneck
+Labeling,Simple solution for labeling (<100 req/s),Managed solution for labeling (100-10K req/s),Custom/distributed solution for labeling (10K+ req/s),Migrate to next tier when labeling becomes a bottleneck

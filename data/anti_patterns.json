@@ -1,0 +1,177 @@
+[
+  {
+    "anti_pattern_name": "Just Retrain on Everything",
+    "symptom": "Team exhibits signs of just retrain on everything in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper testing planning",
+    "fix": "Implement structured approach to avoid just retrain on everything",
+    "severity": "low"
+  },
+  {
+    "anti_pattern_name": "Notebook-to-Production",
+    "symptom": "Team exhibits signs of notebook-to-production in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper monitoring planning",
+    "fix": "Implement structured approach to avoid notebook-to-production",
+    "severity": "low"
+  },
+  {
+    "anti_pattern_name": "Feature Store YOLO",
+    "symptom": "Team exhibits signs of feature store yolo in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper training planning",
+    "fix": "Implement structured approach to avoid feature store yolo",
+    "severity": "critical"
+  },
+  {
+    "anti_pattern_name": "Metrics Without Monitoring",
+    "symptom": "Team exhibits signs of metrics without monitoring in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper testing planning",
+    "fix": "Implement structured approach to avoid metrics without monitoring",
+    "severity": "low"
+  },
+  {
+    "anti_pattern_name": "One Model to Rule Them All",
+    "symptom": "Team exhibits signs of one model to rule them all in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper data planning",
+    "fix": "Implement structured approach to avoid one model to rule them all",
+    "severity": "high"
+  },
+  {
+    "anti_pattern_name": "Premature Optimization",
+    "symptom": "Team exhibits signs of premature optimization in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper organization planning",
+    "fix": "Implement structured approach to avoid premature optimization",
+    "severity": "medium"
+  },
+  {
+    "anti_pattern_name": "Training-Serving Skew Blindness",
+    "symptom": "Team exhibits signs of training-serving skew blindness in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper monitoring planning",
+    "fix": "Implement structured approach to avoid training-serving skew blindness",
+    "severity": "low"
+  },
+  {
+    "anti_pattern_name": "Manual Feature Engineering Forever",
+    "symptom": "Team exhibits signs of manual feature engineering forever in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper serving planning",
+    "fix": "Implement structured approach to avoid manual feature engineering forever",
+    "severity": "medium"
+  },
+  {
+    "anti_pattern_name": "Ignoring Data Quality",
+    "symptom": "Team exhibits signs of ignoring data quality in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper testing planning",
+    "fix": "Implement structured approach to avoid ignoring data quality",
+    "severity": "medium"
+  },
+  {
+    "anti_pattern_name": "Over-Engineering for Scale",
+    "symptom": "Team exhibits signs of over-engineering for scale in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper training planning",
+    "fix": "Implement structured approach to avoid over-engineering for scale",
+    "severity": "low"
+  },
+  {
+    "anti_pattern_name": "No Fallback Strategy",
+    "symptom": "Team exhibits signs of no fallback strategy in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper training planning",
+    "fix": "Implement structured approach to avoid no fallback strategy",
+    "severity": "medium"
+  },
+  {
+    "anti_pattern_name": "Monolithic ML Pipeline",
+    "symptom": "Team exhibits signs of monolithic ml pipeline in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper monitoring planning",
+    "fix": "Implement structured approach to avoid monolithic ml pipeline",
+    "severity": "medium"
+  },
+  {
+    "anti_pattern_name": "Copy-Paste ML",
+    "symptom": "Team exhibits signs of copy-paste ml in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper monitoring planning",
+    "fix": "Implement structured approach to avoid copy-paste ml",
+    "severity": "high"
+  },
+  {
+    "anti_pattern_name": "Invisible Technical Debt",
+    "symptom": "Team exhibits signs of invisible technical debt in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper monitoring planning",
+    "fix": "Implement structured approach to avoid invisible technical debt",
+    "severity": "low"
+  },
+  {
+    "anti_pattern_name": "Evaluation on Training Distribution",
+    "symptom": "Team exhibits signs of evaluation on training distribution in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper training planning",
+    "fix": "Implement structured approach to avoid evaluation on training distribution",
+    "severity": "low"
+  },
+  {
+    "anti_pattern_name": "Ignoring Edge Cases",
+    "symptom": "Team exhibits signs of ignoring edge cases in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper training planning",
+    "fix": "Implement structured approach to avoid ignoring edge cases",
+    "severity": "critical"
+  },
+  {
+    "anti_pattern_name": "Alert Fatigue",
+    "symptom": "Team exhibits signs of alert fatigue in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper testing planning",
+    "fix": "Implement structured approach to avoid alert fatigue",
+    "severity": "high"
+  },
+  {
+    "anti_pattern_name": "No Version Control for Data",
+    "symptom": "Team exhibits signs of no version control for data in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper serving planning",
+    "fix": "Implement structured approach to avoid no version control for data",
+    "severity": "high"
+  },
+  {
+    "anti_pattern_name": "Treating ML as Software",
+    "symptom": "Team exhibits signs of treating ml as software in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper monitoring planning",
+    "fix": "Implement structured approach to avoid treating ml as software",
+    "severity": "critical"
+  },
+  {
+    "anti_pattern_name": "No Documentation",
+    "symptom": "Team exhibits signs of no documentation in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper serving planning",
+    "fix": "Implement structured approach to avoid no documentation",
+    "severity": "medium"
+  },
+  {
+    "anti_pattern_name": "Hero ML Engineer",
+    "symptom": "Team exhibits signs of hero ml engineer in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper organization planning",
+    "fix": "Implement structured approach to avoid hero ml engineer",
+    "severity": "low"
+  },
+  {
+    "anti_pattern_name": "Chasing SOTA",
+    "symptom": "Team exhibits signs of chasing sota in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper testing planning",
+    "fix": "Implement structured approach to avoid chasing sota",
+    "severity": "high"
+  },
+  {
+    "anti_pattern_name": "No Business Metrics Alignment",
+    "symptom": "Team exhibits signs of no business metrics alignment in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper training planning",
+    "fix": "Implement structured approach to avoid no business metrics alignment",
+    "severity": "high"
+  },
+  {
+    "anti_pattern_name": "Batch When You Need Real-Time",
+    "symptom": "Team exhibits signs of batch when you need real-time in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper serving planning",
+    "fix": "Implement structured approach to avoid batch when you need real-time",
+    "severity": "high"
+  },
+  {
+    "anti_pattern_name": "Premature Microservices",
+    "symptom": "Team exhibits signs of premature microservices in their ML workflow",
+    "root_cause": "Usually caused by rushing to production without proper monitoring planning",
+    "fix": "Implement structured approach to avoid premature microservices",
+    "severity": "low"
+  }
+]
