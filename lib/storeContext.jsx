@@ -15,6 +15,7 @@ import {
 import {
   doc,
   getDoc,
+  getDocs,
   setDoc,
   updateDoc,
   deleteDoc,
@@ -47,6 +48,7 @@ export function StoreProvider({ children }) {
 
   const [loadingAuth, setLoadingAuth] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [profileHydrated, setProfileHydrated] = useState(false);
   const [skillGraph, setSkillGraph] = useState({ nodes: [], edges: [] });
   const [leagueMembers, setLeagueMembers] = useState([]);
   const [history, setHistory] = useState([]);
@@ -236,7 +238,7 @@ export function StoreProvider({ children }) {
 
   // ─── Automatic Cloud Firestore Auto-Sync Engine ────────────────────────
   useEffect(() => {
-    if (!isHydrated || !currentUid || currentUid === "guest_demo") return;
+    if (!isHydrated || !currentUid || currentUid === "guest_demo" || !profileHydrated) return;
     if (user.userId !== currentUid) return; // Guard: prevent syncing transient pre-login state
 
     const syncToFirestore = async () => {
@@ -260,7 +262,7 @@ export function StoreProvider({ children }) {
 
     const timer = setTimeout(syncToFirestore, 1000);
     return () => clearTimeout(timer);
-  }, [user, skillGraph, currentUid, isHydrated]);
+  }, [user, skillGraph, currentUid, isHydrated, profileHydrated]);
 
   // Firebase Auth Observer — sets currentUid and fetches Firestore user doc on login
   useEffect(() => {
@@ -311,21 +313,49 @@ export function StoreProvider({ children }) {
             }
           }
         } else {
-          setUser((prev) => {
-            const merged = {
+          // If no primary UID doc found, attempt recovery via email fallback UID
+          let altData = null;
+          if (email) {
+            const altId = stableFallbackUid(email);
+            altData = await fetchFirestoreUser(null, email);
+          }
+
+          if (altData) {
+            const fullUser = {
+              userId: uid,
+              name: finalName,
+              email: email || altData.email || "",
+              track: altData.track || "",
+              trackTitle: altData.trackTitle || "",
+              customTracks: altData.customTracks || [],
+              trackGraphs: altData.trackGraphs || {},
+              xp: altData.xp || 0,
+              streak: altData.streak || { current: 1, longest: 1, lastActiveDate: new Date().toISOString() },
+              leagueId: altData.leagueId || "league_gold",
+              questionsAnswered: altData.questionsAnswered || 0,
+              resumeUploaded: altData.resumeUploaded || false,
+              resumeFileName: altData.resumeFileName || null,
+              extractedSkills: altData.extractedSkills || [],
+              createdAt: altData.createdAt || new Date().toISOString()
+            };
+            setUser(fullUser);
+            if (altData.skillGraph && altData.skillGraph.nodes?.length > 0) {
+              setSkillGraph(altData.skillGraph);
+            }
+            setProfileHydrated(true);
+          } else {
+            setUser((prev) => ({
               ...prev,
               userId: uid,
               email: email || prev.email,
               name: finalName
-            };
-            if (typeof window !== "undefined") {
-              localStorage.setItem("ascend_user", JSON.stringify(merged));
-            }
-            return merged;
-          });
+            }));
+            // Do NOT mark profileHydrated = true for blank unverified doc to prevent Auto-Sync wiping
+          }
         }
       } else {
         setCurrentUid("guest_demo");
+        setProfileHydrated(false);
       }
       setLoadingAuth(false);
     });
@@ -483,13 +513,19 @@ export function StoreProvider({ children }) {
     const newQuestions = (user.questionsAnswered || 0) + 1;
     const currentStreakVal = user.streak?.current || 1;
 
-    setUser((prev) => ({ ...prev, xp: newXp, questionsAnswered: newQuestions }));
+    // Dynamically compute league division based on total XP
+    let newLeagueId = "league_bronze";
+    if (newXp >= 7000) newLeagueId = "league_master";
+    else if (newXp >= 3500) newLeagueId = "league_diamond";
+    else if (newXp >= 1500) newLeagueId = "league_gold";
+    else if (newXp >= 500) newLeagueId = "league_silver";
+
+    setUser((prev) => ({ ...prev, xp: newXp, questionsAnswered: newQuestions, leagueId: newLeagueId }));
 
     try {
-      await setDoc(doc(db, "users", currentUid), { xp: newXp, questionsAnswered: newQuestions }, { merge: true });
+      await setDoc(doc(db, "users", currentUid), { xp: newXp, questionsAnswered: newQuestions, leagueId: newLeagueId }, { merge: true });
 
-      const leagueId = user.leagueId || "league_gold";
-      await setDoc(doc(db, "leagues", leagueId, "members", currentUid), {
+      await setDoc(doc(db, "leagues", newLeagueId, "members", currentUid), {
         name: user.name || "Candidate",
         xp: newXp,
         streak: currentStreakVal,
@@ -654,85 +690,52 @@ export function StoreProvider({ children }) {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
       setCurrentUid(uid);
-      let userData = {
-        userId: uid,
-        name: userCredential.user.displayName || email.split("@")[0] || "Candidate",
-        email: userCredential.user.email || email,
-        track: "",
-        trackTitle: "",
-        customTracks: [],
-        trackGraphs: {},
-        xp: 0,
-        streak: { current: 1, longest: 1, lastActiveDate: new Date().toISOString() },
-        leagueId: "league_gold",
-        questionsAnswered: 0,
-        resumeUploaded: false,
-        resumeFileName: null,
-        extractedSkills: [],
-        createdAt: new Date().toISOString()
-      };
 
+      // Immediately fetch Firestore data for this user ID & email
       const existingDocData = await fetchFirestoreUser(uid, email);
-      if (existingDocData) {
-        userData = { ...userData, ...existingDocData };
-        if (existingDocData.skillGraph && existingDocData.skillGraph.nodes?.length > 0) {
-          setSkillGraph(existingDocData.skillGraph);
-          if (typeof window !== "undefined") {
-            localStorage.setItem("ascend_skillGraph", JSON.stringify(existingDocData.skillGraph));
-          }
-        }
-      }
-
-      setUser(userData);
+      let savedCustomName = "";
       if (typeof window !== "undefined") {
-        localStorage.setItem("ascend_user", JSON.stringify(userData));
-        if (userData.name) localStorage.setItem("ascend_custom_username", userData.name);
-      }
-      return userData;
-    } catch (err) {
-      console.warn("Firebase sign in notice:", err.code || err.message);
-
-      // If auth fails due to invalid credentials, wrong password, or deleted user account, throw error to UI!
-      const errCode = err.code || "";
-      if (
-        errCode.includes("user-not-found") ||
-        errCode.includes("wrong-password") ||
-        errCode.includes("invalid-credential") ||
-        errCode.includes("user-disabled")
-      ) {
-        throw new Error("Invalid email or password. If you deleted your account, please sign up again.");
+        try { savedCustomName = localStorage.getItem("ascend_custom_username") || ""; } catch (_) {}
       }
 
-      const stableId = stableFallbackUid(email);
-      setCurrentUid(stableId);
-      let fallbackUser = {
-        userId: stableId,
-        name: email.split("@")[0] || "Candidate",
-        email: email,
-        xp: 0,
-        streak: { current: 1, longest: 1, lastActiveDate: new Date().toISOString() },
-        leagueId: "league_gold",
-        questionsAnswered: 0
+      const finalName = existingDocData?.name || userCredential.user.displayName || savedCustomName || email.split("@")[0] || "Candidate";
+
+      const fullUser = {
+        userId: uid,
+        name: finalName,
+        email: userCredential.user.email || email,
+        track: existingDocData?.track || "",
+        trackTitle: existingDocData?.trackTitle || "",
+        customTracks: existingDocData?.customTracks || [],
+        trackGraphs: existingDocData?.trackGraphs || {},
+        xp: existingDocData?.xp || 0,
+        streak: existingDocData?.streak || { current: 1, longest: 1, lastActiveDate: new Date().toISOString() },
+        leagueId: existingDocData?.leagueId || "league_gold",
+        questionsAnswered: existingDocData?.questionsAnswered || 0,
+        resumeUploaded: existingDocData?.resumeUploaded || false,
+        resumeFileName: existingDocData?.resumeFileName || null,
+        extractedSkills: existingDocData?.extractedSkills || [],
+        createdAt: existingDocData?.createdAt || new Date().toISOString()
       };
 
-      const existingDocData = await fetchFirestoreUser(stableId, email);
-      if (existingDocData) {
-        fallbackUser = { ...fallbackUser, ...existingDocData };
-        if (existingDocData.skillGraph && existingDocData.skillGraph.nodes?.length > 0) {
-          setSkillGraph(existingDocData.skillGraph);
-        }
-      } else {
-        await setDoc(doc(db, "users", stableId), fallbackUser, { merge: true }).catch(() => { });
+      setUser(fullUser);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("ascend_user", JSON.stringify(fullUser));
+        localStorage.setItem("ascend_custom_username", finalName);
       }
 
-      setUser((prev) => {
-        const updated = { ...prev, ...fallbackUser };
-        if (typeof window !== "undefined" && updated.track) {
-          localStorage.setItem("ascend_user", JSON.stringify(updated));
+      if (existingDocData?.skillGraph && existingDocData.skillGraph.nodes?.length > 0) {
+        setSkillGraph(existingDocData.skillGraph);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("ascend_skillGraph", JSON.stringify(existingDocData.skillGraph));
         }
-        return updated;
-      });
-      return fallbackUser;
+      }
+
+      setProfileHydrated(true);
+      return fullUser;
+    } catch (err) {
+      console.warn("Firebase sign in error:", err.code || err.message);
+      throw new Error("Account does not exist or password is incorrect. Please sign up for a new account.");
     }
   };
 
@@ -871,6 +874,7 @@ export function StoreProvider({ children }) {
       createdAt: new Date().toISOString()
     });
     setSkillGraph({ nodes: [], edges: [] });
+    setProfileHydrated(false);
   };
 
   const deleteAccountAndData = async () => {
@@ -916,7 +920,7 @@ export function StoreProvider({ children }) {
       trackTitle: "",
       customTracks: [],
       xp: 0,
-      streak: { current: 0, longest: 0, lastActiveDate: new Date().toISOString() },
+      streak: { current: 1, longest: 1, lastActiveDate: new Date().toISOString() },
       leagueId: "league_gold",
       questionsAnswered: 0,
       resumeUploaded: false,

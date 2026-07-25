@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { buildSkillGraphForTrack, getJobDataset } from "@/lib/datasetLoader";
 import { generateSkillGraph } from "@/lib/geminiClient";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);

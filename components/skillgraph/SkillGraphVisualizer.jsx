@@ -41,13 +41,17 @@ export default function SkillGraphVisualizer({ graphData, compact = false }) {
       return "#E39EB2";
     };
 
-    // Force simulation setup with bounded constraints
+    // Smooth force simulation setup with decay to prevent continuous trembling
     const simulation = d3
       .forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id((d) => d.id).distance(85))
-      .force("charge", d3.forceManyBody().strength(-220))
+      .alphaDecay(0.04)
+      .alphaMin(0.001)
+      .force("link", d3.forceLink(links).id((d) => d.id).distance(100).strength(0.8))
+      .force("charge", d3.forceManyBody().strength(-140))
       .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collision", d3.forceCollide().radius(40));
+      .force("x", d3.forceX(width / 2).strength(0.08))
+      .force("y", d3.forceY(height / 2).strength(0.08))
+      .force("collision", d3.forceCollide().radius(35));
 
     // Render Edges
     const link = svg
@@ -71,7 +75,7 @@ export default function SkillGraphVisualizer({ graphData, compact = false }) {
         d3
           .drag()
           .on("start", (event, d) => {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
+            if (!event.active) simulation.alphaTarget(0.2).restart();
             d.fx = d.x;
             d.fy = d.y;
           })
@@ -81,8 +85,8 @@ export default function SkillGraphVisualizer({ graphData, compact = false }) {
           })
           .on("end", (event, d) => {
             if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
+            d.fx = d.x;
+            d.fy = d.y;
           })
       );
 
@@ -132,13 +136,8 @@ export default function SkillGraphVisualizer({ graphData, compact = false }) {
       setSelectedNode(d);
     });
 
-    // Simulation Ticker with Bounded Viewport Enforcement
+    // Simulation Ticker
     simulation.on("tick", () => {
-      nodes.forEach((d) => {
-        d.x = Math.max(margin, Math.min(width - margin, d.x));
-        d.y = Math.max(margin, Math.min(height - margin, d.y));
-      });
-
       link
         .attr("x1", (d) => d.source.x)
         .attr("y1", (d) => d.source.y)

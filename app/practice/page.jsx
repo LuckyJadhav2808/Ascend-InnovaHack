@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useStore } from "@/lib/storeContext";
 import { useToast } from "@/lib/toastContext";
@@ -8,7 +8,7 @@ import VoiceAnswerBox from "@/components/practice/VoiceAnswerBox";
 import EvaluationFeedback from "@/components/practice/EvaluationFeedback";
 import { Sparkles, Brain, Loader2, RefreshCw } from "lucide-react";
 
-export default function PracticePage() {
+function PracticeContent() {
   const { track, trackTitle, skillGraph, recordPracticeEvaluation, updateStreak } = useStore();
   const searchParams = useSearchParams();
   const targetTopic = searchParams?.get("topic") || "";
@@ -59,7 +59,7 @@ export default function PracticePage() {
 
   useEffect(() => {
     fetchQuestions();
-  }, [track]);
+  }, [track, targetTopic]);
 
   const currentQuestion = questions[questionIndex % questions.length] || questions[0];
 
@@ -98,8 +98,17 @@ export default function PracticePage() {
         suggestedTopics: evaluation.suggestedTopics || []
       };
 
-      recordPracticeEvaluation(evalResult);
       setEvaluationResult(evalResult);
+
+      recordPracticeEvaluation({
+        topic: currentQuestion.topic,
+        prompt: currentQuestion.prompt,
+        answerText,
+        score,
+        xpAwarded,
+        feedback: evaluation.feedback || `Evaluated score: ${score}/100`
+      });
+
       updateStreak();
       if (score > 0) {
         toast.xp(`+${xpAwarded} XP Earned! AI Score: ${score}/100`);
@@ -206,5 +215,20 @@ export default function PracticePage() {
         <VoiceAnswerBox onSubmit={handleAnswerSubmit} isSubmitting={isSubmitting} />
       )}
     </div>
+  );
+}
+
+export default function PracticePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex flex-col items-center justify-center py-24 gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-[#FF6B4A]" />
+          <p className="text-xs font-semibold text-[#8A8A8A]">Loading practice module...</p>
+        </div>
+      }
+    >
+      <PracticeContent />
+    </Suspense>
   );
 }

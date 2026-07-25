@@ -35,6 +35,12 @@ function LayoutContent({ children }) {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <title>Ascend — AI Placement & Technical Interview Coach</title>
+        <meta name="description" content="Production-grade AI interview prep platform featuring real-time AI screens, adaptive skill graphs, ATS resume analyzer, and peer leagues." />
+        <link rel="icon" href="/icon.png" type="image/png" sizes="any" />
+        <link rel="apple-touch-icon" href="/icon.png" />
+      </head>
       <body className="bg-[#F7F6F3] text-[#1E1E1E] flex min-h-screen font-sans antialiased selection:bg-[#FF6B4A]/20">
         <StoreProvider>
           <ToastProvider>

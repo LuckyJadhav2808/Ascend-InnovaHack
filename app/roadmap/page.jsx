@@ -68,14 +68,16 @@ export default function RoadmapPage() {
         .slice(0, 4)
         .map((n) => n.topic);
 
-      const params = new URLSearchParams({
-        track: track || "",
-        trackTitle: trackTitle || track || "",
-        weakNodes: weakNodes.join(","),
-        skillGraph: JSON.stringify(skillGraph)
+      const res = await fetch("/api/dataset/roadmap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          track: track || "",
+          trackTitle: trackTitle || track || "",
+          weakNodes,
+          skillGraph
+        })
       });
-
-      const res = await fetch(`/api/dataset/roadmap?${params.toString()}`);
       const data = await res.json();
 
       if (data.success && data.roadmap) {
