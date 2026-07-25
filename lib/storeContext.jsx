@@ -862,7 +862,7 @@ export function StoreProvider({ children }) {
       trackTitle: "",
       customTracks: [],
       xp: 0,
-      streak: { current: 0, longest: 0, lastActiveDate: new Date().toISOString() },
+      streak: { current: 1, longest: 1, lastActiveDate: new Date().toISOString() },
       leagueId: "league_gold",
       questionsAnswered: 0,
       resumeUploaded: false,
