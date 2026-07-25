@@ -195,6 +195,15 @@ export default function LandingPage() {
           </button>
           <button
             onClick={() => {
+              setAuthMode("login");
+              document.getElementById("auth-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }}
+            className="text-xs font-bold text-[#1E1E1E] border border-[#E5E5E0] px-4 py-2.5 rounded-xl hover:bg-[#F7F6F3] transition-colors"
+          >
+            Sign In
+          </button>
+          <button
+            onClick={() => {
               setAuthMode("signup");
               document.getElementById("auth-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
             }}

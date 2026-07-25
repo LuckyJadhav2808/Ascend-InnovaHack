@@ -13,9 +13,9 @@ export default function SkillGraphVisualizer({ graphData, compact = false }) {
   useEffect(() => {
     if (!graphData || !graphData.nodes || !graphData.nodes.length || !svgRef.current || viewMode !== "graph") return;
 
-    const width = 600;
-    const height = compact ? 320 : 400;
-    const margin = 50;
+    const width = 800;
+    const height = compact ? 380 : 460;
+    const margin = 60;
 
     // Clear previous elements
     d3.select(svgRef.current).selectAll("*").remove();
@@ -26,8 +26,37 @@ export default function SkillGraphVisualizer({ graphData, compact = false }) {
       .attr("height", "100%")
       .attr("viewBox", `0 0 ${width} ${height}`);
 
-    const nodes = graphData.nodes.map((d) => ({ ...d }));
-    const links = (graphData.edges || []).map((d) => ({ source: d.from, target: d.to }));
+    // Calculate guaranteed non-overlapping grid positions across 3 rows
+    const totalNodes = graphData.nodes.length;
+    const cols = totalNodes <= 6 ? 3 : 4;
+    const horizontalSpacing = Math.floor((width - 160) / (cols - 1 || 1));
+    const verticalSpacing = compact ? 110 : 130;
+    const startY = 75;
+
+    const nodeMap = new Map();
+    const nodes = graphData.nodes.map((d, i) => {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      
+      // Stagger odd rows slightly for dynamic honeycomb feel
+      const rowOffset = (row % 2 === 1) ? 40 : 0;
+      const x = Math.min(width - 90, Math.max(90, 100 + col * horizontalSpacing + rowOffset));
+      const y = Math.min(height - 60, Math.max(60, startY + row * verticalSpacing));
+
+      const nodeObj = { ...d, x, y };
+      nodeMap.set(d.id, nodeObj);
+      return nodeObj;
+    });
+
+    // Map links to resolved node coordinate objects
+    const links = (graphData.edges || [])
+      .map((d) => {
+        const sourceNode = nodeMap.get(d.from) || nodes.find((n) => n.id === d.from || n.topic === d.from);
+        const targetNode = nodeMap.get(d.to) || nodes.find((n) => n.id === d.to || n.topic === d.to);
+        if (!sourceNode || !targetNode) return null;
+        return { source: sourceNode, target: targetNode };
+      })
+      .filter(Boolean);
 
     const getColor = (status, mastery) => {
       if (status === "strong" || mastery >= 70) return "#B7D9CF";
@@ -41,20 +70,8 @@ export default function SkillGraphVisualizer({ graphData, compact = false }) {
       return "#E39EB2";
     };
 
-    // Smooth force simulation setup with decay and boundary clamping to prevent trembling
-    const simulation = d3
-      .forceSimulation(nodes)
-      .alphaDecay(0.05)
-      .alphaMin(0.005)
-      .force("link", d3.forceLink(links).id((d) => d.id).distance(135).strength(0.7))
-      .force("charge", d3.forceManyBody().strength(-380))
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("x", d3.forceX(width / 2).strength(0.06))
-      .force("y", d3.forceY(height / 2).strength(0.06))
-      .force("collision", d3.forceCollide().radius(52).strength(1));
-
     // Render Edges
-    const link = svg
+    const linkGroup = svg
       .append("g")
       .attr("stroke", "#D5D5D0")
       .attr("stroke-opacity", 0.9)
@@ -62,31 +79,37 @@ export default function SkillGraphVisualizer({ graphData, compact = false }) {
       .selectAll("line")
       .data(links)
       .join("line")
-      .attr("stroke-dasharray", "4 3");
+      .attr("stroke-dasharray", "4 3")
+      .attr("x1", (d) => d.source.x)
+      .attr("y1", (d) => d.source.y)
+      .attr("x2", (d) => d.target.x)
+      .attr("y2", (d) => d.target.y);
 
-    // Node Container Group
+    // Node Container Group with direct SVG drag rendering (0 background tickers = 0 position loops)
     const nodeGroup = svg
       .append("g")
       .selectAll("g")
       .data(nodes)
       .join("g")
-      .style("cursor", "pointer")
+      .style("cursor", "grab")
+      .attr("transform", (d) => `translate(${d.x},${d.y})`)
       .call(
         d3
           .drag()
-          .on("start", (event, d) => {
-            if (!event.active) simulation.alphaTarget(0.2).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-          })
           .on("drag", (event, d) => {
-            d.fx = Math.max(margin, Math.min(width - margin, event.x));
-            d.fy = Math.max(margin, Math.min(height - margin, event.y));
-          })
-          .on("end", (event, d) => {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = d.x;
-            d.fy = d.y;
+            const nx = Math.max(margin, Math.min(width - margin, event.x));
+            const ny = Math.max(margin, Math.min(height - margin, event.y));
+            d.x = nx;
+            d.y = ny;
+            d3.select(event.sourceEvent.target.closest("g")).attr("transform", `translate(${nx},${ny})`);
+            linkGroup
+              .filter((l) => l.source === d)
+              .attr("x1", nx)
+              .attr("y1", ny);
+            linkGroup
+              .filter((l) => l.target === d)
+              .attr("x2", nx)
+              .attr("y2", ny);
           })
       );
 
@@ -135,24 +158,6 @@ export default function SkillGraphVisualizer({ graphData, compact = false }) {
     nodeGroup.on("click", (event, d) => {
       setSelectedNode(d);
     });
-
-    // Simulation Ticker with position bounds and auto-settle freeze
-    simulation.on("tick", () => {
-      nodes.forEach((d) => {
-        d.x = Math.max(50, Math.min(width - 50, d.x));
-        d.y = Math.max(50, Math.min(height - 55, d.y));
-      });
-
-      link
-        .attr("x1", (d) => d.source.x)
-        .attr("y1", (d) => d.source.y)
-        .attr("x2", (d) => d.target.x)
-        .attr("y2", (d) => d.target.y);
-
-      nodeGroup.attr("transform", (d) => `translate(${d.x},${d.y})`);
-    });
-
-    return () => simulation.stop();
   }, [graphData, compact, viewMode]);
 
   const nodesList = graphData?.nodes || [];

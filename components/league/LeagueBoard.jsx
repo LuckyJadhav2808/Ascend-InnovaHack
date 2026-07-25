@@ -89,10 +89,11 @@ export function calculateTrackUserRank(user, trackTitle = "") {
 
 export default function LeagueBoard({ compact = false }) {
   const { leagueMembers, user, trackTitle } = useStore();
-  const [seasonCountdown, setSeasonCountdown] = useState(calculateTimeUntilSundayEnd());
+  const [seasonCountdown, setSeasonCountdown] = useState("");
 
-  // Live 1-second ticker for Monday-to-Sunday season countdown
+  // Live 1-second ticker for Monday-to-Sunday season countdown (populated on mount to prevent SSR hydration mismatch)
   useEffect(() => {
+    setSeasonCountdown(calculateTimeUntilSundayEnd());
     const timer = setInterval(() => {
       setSeasonCountdown(calculateTimeUntilSundayEnd());
     }, 1000);
