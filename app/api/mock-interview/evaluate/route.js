@@ -21,7 +21,7 @@ export async function POST(request) {
 
     let scorecard = null;
 
-    if (process.env.GEMINI_API_KEY && !isVeryShort) {
+    if ((process.env.GEMINI_API_KEY || process.env.OPENROUTER_API_KEY) && !isVeryShort) {
       try {
         const prompt = `You are a Senior Staff Engineer conducting a bar-raiser technical interview for a ${difficulty} level candidate applying for track: "${track}".
 

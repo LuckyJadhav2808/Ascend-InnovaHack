@@ -69,7 +69,7 @@ export async function POST(request) {
     let evaluationResult = null;
 
     // Use Gemini AI for deep bullet analysis if API key is present
-    if (process.env.GEMINI_API_KEY) {
+    if (process.env.GEMINI_API_KEY || process.env.OPENROUTER_API_KEY) {
       try {
         const prompt = `You are an executive ATS Resume Architect evaluating a candidate's resume for a "${track}" position.
 

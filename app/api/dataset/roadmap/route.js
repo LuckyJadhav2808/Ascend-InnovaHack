@@ -20,7 +20,7 @@ export async function GET(request) {
 
     // Try Gemini AI for intelligent roadmap
     let roadmap = null;
-    if (process.env.GEMINI_API_KEY && weakNodes.length > 0) {
+    if ((process.env.GEMINI_API_KEY || process.env.OPENROUTER_API_KEY) && weakNodes.length > 0) {
       const patterns = getPatterns();
       const trends = getYearlyTrends().filter((t) => parseInt(t.year) >= 2024);
 

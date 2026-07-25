@@ -18,13 +18,13 @@ function LayoutContent({ children }) {
 
   return (
     <div className="flex w-full max-w-full min-h-screen overflow-x-hidden">
-      {/* Left Vertical Navigation Rail */}
+      {/* Left Vertical Navigation Rail (Fixed) */}
       <LeftRail />
 
-      {/* Main Dashboard Application Area */}
-      <div className="flex-1 flex flex-col min-w-0 w-full max-w-full overflow-x-hidden">
+      {/* Main Dashboard Application Area (offset for fixed sidebar on desktop) */}
+      <div className="flex-1 flex flex-col min-w-0 w-full max-w-full overflow-x-hidden md:ml-20">
         <TopBar />
-        <main className="flex-1 p-3 sm:p-6 md:p-8 max-w-7xl mx-auto w-full max-w-full overflow-x-hidden pb-20 md:pb-8">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full max-w-full pb-20 md:pb-8">
           {children}
         </main>
       </div>

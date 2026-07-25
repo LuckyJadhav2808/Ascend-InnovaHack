@@ -61,7 +61,7 @@ export async function POST(request) {
 
     let evaluation = null;
 
-    if (process.env.GEMINI_API_KEY) {
+    if (process.env.GEMINI_API_KEY || process.env.OPENROUTER_API_KEY) {
       evaluation = await evaluateAnswer(question, answer, topic || "General", referenceAnswer || "");
     }
 

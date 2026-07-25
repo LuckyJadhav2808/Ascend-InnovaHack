@@ -77,13 +77,14 @@ export default function LeftRail() {
   return (
     <>
       {/* Desktop Vertical Navigation Rail */}
-      <aside className="hidden md:flex w-20 bg-white border-r border-[#E5E5E0] flex-col items-center py-6 justify-between shadow-xs z-30 shrink-0 min-h-screen sticky top-0 h-screen select-none">
+      <aside className="hidden md:flex w-20 bg-white border-r border-[#E5E5E0] flex-col items-center py-6 justify-between shadow-xs z-30 shrink-0 fixed top-0 left-0 h-screen select-none overflow-hidden">
         {/* Top: Ascend Brand Badge */}
-        <div className="flex flex-col items-center gap-1.5">
+        <div className="flex flex-col items-center gap-1.5 shrink-0">
           <Link
             href="/dashboard"
             onClick={(e) => handleNavClick(e, "/dashboard")}
-            className="w-12 h-12 bg-[#1E1E1E] hover:bg-[#333333] rounded-2xl flex items-center justify-center text-white font-extrabold text-xl shadow-card hover:scale-105 transition-all duration-200 group"
+            title="Dashboard"
+            className="w-12 h-12 bg-[#1E1E1E] hover:bg-[#333333] rounded-2xl flex items-center justify-center text-white font-extrabold text-xl shadow-card transition-all duration-200 group"
           >
             <span className="text-[#F6D67A] group-hover:rotate-12 transition-transform duration-200">A</span>
           </Link>
@@ -93,7 +94,7 @@ export default function LeftRail() {
         </div>
 
         {/* Center: Main Icon Navigation */}
-        <nav className="flex flex-col items-center gap-3 my-auto w-full">
+        <nav className="flex flex-col items-center gap-1.5 my-auto w-full">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
@@ -103,45 +104,36 @@ export default function LeftRail() {
                 key={item.name}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
-                className="relative group flex items-center justify-center w-full"
+                title={item.name}
+                className="relative flex items-center justify-center w-full"
               >
                 <div
-                  className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 ${
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-colors duration-200 ${
                     isActive
-                      ? "bg-[#1E1E1E] text-white shadow-card scale-105"
+                      ? "bg-[#1E1E1E] text-white"
                       : "text-[#8A8A8A] hover:bg-[#F7F6F3] hover:text-[#1E1E1E]"
                   }`}
                 >
-                  <Icon className={`w-5 h-5 ${isActive ? "stroke-[2.5]" : "stroke-[2]"}`} />
+                  <Icon className={`w-5 h-5 ${isActive ? "stroke-[2.5]" : "stroke-[1.5]"}`} />
                 </div>
 
                 {/* Inset Active Indicator Right Pill Bar */}
                 {isActive && (
-                  <span className="absolute right-0 w-1 h-6 bg-[#FF6B4A] rounded-l-full shadow-xs animate-in fade-in duration-200" />
+                  <span className="absolute right-0 w-1 h-6 bg-[#FF6B4A] rounded-l-full" />
                 )}
-
-                {/* Custom Production Tooltip Popup */}
-                <div className="absolute left-16 bg-[#1E1E1E] text-white text-xs px-3 py-1.5 rounded-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-2xl font-bold flex items-center gap-2 border border-white/10 translate-x-1 group-hover:translate-x-0">
-                  <span>{item.name}</span>
-                  {item.badge && (
-                    <span className="bg-[#FF6B4A] text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded-md uppercase">
-                      {item.badge}
-                    </span>
-                  )}
-                </div>
               </Link>
             );
           })}
         </nav>
 
         {/* Bottom: Streak Badge & Logout Button */}
-        <div className="flex flex-col items-center gap-3 pt-3 border-t border-[#E5E5E0]/70 w-full">
+        <div className="flex flex-col items-center gap-3 pt-3 border-t border-[#E5E5E0]/70 w-full shrink-0">
           {/* Streak Flame Pill */}
           <div
             title={`${user.streak?.current || 1} Day Active Practice Streak`}
-            className="w-11 h-11 bg-[#FFEBE6] border border-[#FF6B4A]/30 rounded-2xl flex flex-col items-center justify-center text-[#FF6B4A] shadow-xs hover:scale-105 transition-transform cursor-pointer group relative"
+            className="w-11 h-11 bg-[#FFEBE6] border border-[#FF6B4A]/30 rounded-2xl flex flex-col items-center justify-center text-[#FF6B4A] cursor-pointer"
           >
-            <Flame className="w-4 h-4 fill-[#FF6B4A] group-hover:animate-bounce" />
+            <Flame className="w-4 h-4 fill-[#FF6B4A]" />
             <span className="text-[9px] font-extrabold text-[#FF6B4A] leading-none mt-0.5">
               {user.streak?.current || 1}d
             </span>
@@ -151,7 +143,7 @@ export default function LeftRail() {
           <button
             onClick={handleLogout}
             title="Sign Out"
-            className="w-10 h-10 rounded-xl text-[#8A8A8A] hover:text-[#FF6B4A] hover:bg-[#FFEBE6] flex items-center justify-center transition-all duration-200 group relative"
+            className="w-10 h-10 rounded-xl text-[#8A8A8A] hover:text-[#FF6B4A] hover:bg-[#FFEBE6] flex items-center justify-center transition-colors duration-200"
           >
             <LogOut className="w-4 h-4 stroke-[2]" />
           </button>

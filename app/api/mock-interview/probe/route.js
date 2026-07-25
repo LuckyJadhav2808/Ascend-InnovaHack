@@ -54,7 +54,7 @@ export async function POST(request) {
     // Dynamic AI follow-up probe generation using Gemini or local dataset
     let nextPrompt = null;
 
-    if (process.env.GEMINI_API_KEY) {
+    if (process.env.GEMINI_API_KEY || process.env.OPENROUTER_API_KEY) {
       try {
         const prompt = `You are a Senior Staff Engineer interviewing a candidate for a ${track} role.
 Candidate just answered Stage ${currentStageIndex + 1} with: "${previousAnswer}".

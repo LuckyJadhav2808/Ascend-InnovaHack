@@ -22,7 +22,7 @@ export async function GET(request) {
 
     // 2. Try Gemini AI for intelligent graph generation
     let graph = null;
-    if (process.env.GEMINI_API_KEY) {
+    if (process.env.GEMINI_API_KEY || process.env.OPENROUTER_API_KEY) {
       const trackTitle = matchingJob?.Title || trackId;
       const datasetContext = matchingJob
         ? `Role: ${matchingJob.Title}, Experience: ${matchingJob.ExperienceLevel}, Keywords: ${matchingJob.Keywords}`

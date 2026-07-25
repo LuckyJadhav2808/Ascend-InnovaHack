@@ -10,7 +10,7 @@ export async function POST(request) {
     let extractedSkills = skills || [];
 
     // If raw resume text provided, use Gemini to extract skills
-    if (resumeText && process.env.GEMINI_API_KEY) {
+    if (resumeText && (process.env.GEMINI_API_KEY || process.env.OPENROUTER_API_KEY)) {
       const aiResult = await extractResumeSkills(resumeText);
       if (aiResult && aiResult.skills) {
         extractedSkills = [...new Set([...extractedSkills, ...aiResult.skills])];

@@ -121,7 +121,7 @@ export default function TopBar() {
 
   return (
     <>
-      <header className="h-16 sm:h-20 bg-white/90 backdrop-blur-md border-b border-[#E5E5E0] px-3 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 shadow-xs gap-2 sm:gap-4 w-full max-w-full overflow-x-hidden">
+      <header className="h-16 sm:h-20 bg-white/90 backdrop-blur-md border-b border-[#E5E5E0] px-3 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 shadow-xs gap-2 sm:gap-4 w-full max-w-full">
         {/* Left Section: Greeting & Streak Flame Badge */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 shrink">
           <div className="min-w-0">
@@ -155,7 +155,7 @@ export default function TopBar() {
 
             {/* Custom Aesthetic Floating Dropdown Card */}
             {isDropdownOpen && (
-              <div className="absolute top-12 left-0 w-72 bg-white rounded-2xl border border-[#E5E5E0] shadow-2xl p-3 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-2">
+              <div className="absolute top-full right-0 sm:left-0 sm:right-auto mt-2 w-72 bg-white rounded-2xl border border-[#E5E5E0] shadow-2xl p-3 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-2">
                 <div className="text-[10px] font-extrabold uppercase text-[#8A8A8A] px-1 tracking-wider flex items-center justify-between">
                   <span>Select Active Track</span>
                   <span className="text-[#FF6B4A]">{allTracks.length} Available</span>
