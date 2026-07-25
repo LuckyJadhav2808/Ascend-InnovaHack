@@ -22,9 +22,9 @@ function LayoutContent({ children }) {
       <LeftRail />
 
       {/* Main Dashboard Application Area */}
-      <div className="flex-1 flex flex-col min-w-0 w-full max-w-full overflow-x-hidden pb-16 md:pb-0">
+      <div className="flex-1 flex flex-col min-w-0 w-full max-w-full overflow-x-hidden">
         <TopBar />
-        <main className="flex-1 p-3 sm:p-6 md:p-8 max-w-7xl mx-auto w-full max-w-full overflow-x-hidden">
+        <main className="flex-1 p-3 sm:p-6 md:p-8 max-w-7xl mx-auto w-full max-w-full overflow-x-hidden pb-20 md:pb-8">
           {children}
         </main>
       </div>

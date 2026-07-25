@@ -159,7 +159,7 @@ export default function LeftRail() {
       </aside>
 
       {/* Floating Mobile Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E5E5E0] px-2 py-2 flex items-center justify-around shadow-2xl">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E5E5E0] px-3 py-1.5 flex items-center justify-around shadow-xl">
         {navItems.slice(0, 4).map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
@@ -169,16 +169,16 @@ export default function LeftRail() {
               key={item.name}
               href={item.href}
               onClick={(e) => handleNavClick(e, item.href)}
-              className="flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all"
+              className="flex flex-col items-center justify-center py-0.5 px-2 rounded-xl transition-all"
             >
               <div
-                className={`p-2 rounded-xl flex items-center justify-center ${
+                className={`p-1.5 rounded-xl flex items-center justify-center ${
                   isActive ? "bg-[#1E1E1E] text-white shadow-xs" : "text-[#8A8A8A]"
                 }`}
               >
                 <Icon className="w-4 h-4" />
               </div>
-              <span className={`text-[9px] font-extrabold mt-1 ${isActive ? "text-[#1E1E1E]" : "text-[#8A8A8A]"}`}>
+              <span className={`text-[9px] font-bold mt-0.5 ${isActive ? "text-[#1E1E1E]" : "text-[#8A8A8A]"}`}>
                 {item.name.split(" ")[0]}
               </span>
             </Link>
